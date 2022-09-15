@@ -1,4 +1,5 @@
 const axios = require('axios')
+const { find } = require('../models/collegeModel')
 const collegeModel = require('../models/collegeModel')
 const internModel = require('../models/internModel')
 const { createIntern } = require('./internController')
@@ -60,9 +61,12 @@ const createCollege = async function (req,res){
             if (repeatedlogoLink) {
                 return res.status(400).send({ status: false, msg: `Logo Link already exists!` });
             }
+
             //===================================== creating a college data ==============================
-            let collegeCreation = await collegeModel.create(data)
-            return res.status(201).send({ status: true, data: collegeCreation})
+            let collegeData =  await collegeModel.create(data)
+           let newData = { name: collegeData.name, fullName: collegeData.fullName, logoLink: collegeData.logoLink, isDeleted: collegeData.isDeleted }
+          // let Data= await collegeModel.find(data).select({_id:0,__v:0})
+            return res.status(201).send({ status: true, data: newData})
 
 
         }
@@ -72,7 +76,7 @@ const createCollege = async function (req,res){
 
     }
     catch(error){
-        return res.status(500).send({ status: false, msg: err.message })
+        return res.status(500).send({ status: false, msg: error.message })
     }
 }
 
@@ -82,23 +86,22 @@ try{
         const name=req.query.collegeName;
         
         if(name){obj.name=name}
-        if(!name){return res.send({msg:"Query is Mendatory"})}
+        if(!name){return res.status(400).send({status:false,msg:"Query is Mendatory"})}
 
       let getdata=await collegeModel.findOne(obj)
+    
       if(!getdata){
         return  res.status(400).send({status:false,msg:"No College found"})
      }
       let data= await internModel.find({collegeId:getdata._id}).select({name:1,email:1,mobile:1})
       
-        
-         return res.status(200).send({status:true,data:{name:getdata.name,fullName:getdata.fullName,logoLink:getdata.logoLink,interns:data}})
+      if(!data.length){return res.status(400).send({status:false,msg:"No intern applied"})}
+
+         return res.status(200).send({status:true,data:{name:getdata.name,fullName:getdata.fullName,logoLink:getdata.logoLink,interns:data,}})
     }
 catch(error){
     return res.status(500).send(error.message)
 }
 }
-
-
-
 
 module.exports = {createCollege,getDetails}

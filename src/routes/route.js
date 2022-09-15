@@ -4,7 +4,7 @@ const {createCollege,getDetails} = require('../controllers/collegeController')
 const internController = require('../controllers/internController')
 
 
-router.get('/functionup/collegedetails',getDetails)
+router.get('/collegedetails',getDetails)
 router.post('/functionup/colleges',createCollege)
 
 

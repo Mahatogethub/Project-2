@@ -16,8 +16,7 @@ mongoose.connect("mongodb+srv://Group36Database:P5c2dhNmjoQYx3NJ@cluster0.jreuso
         console.log(err)
     })
 
-
-
+ 
 app.use('/', route)
 
 app.listen(process.env.PORT || 3000, function () {
