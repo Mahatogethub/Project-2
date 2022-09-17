@@ -123,6 +123,4 @@ const getDetails = async function (req, res) {
 
 
 
-
-
 module.exports = { createCollege, getDetails }
