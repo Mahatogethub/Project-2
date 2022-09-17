@@ -11,7 +11,7 @@ const createIntern = async function (req, res) {
 
         //=============================== if filters are provided ==========================================
 
-        if (Object.keys(req.query) != 0) {
+        if (Object.keys(req.query).length != 0) {
             return res.status(400).send({ status: false, message: "Do not provide any filter !!" })
         }
         //================================if data is not provided in body ===============================
@@ -22,10 +22,16 @@ const createIntern = async function (req, res) {
         if (!name) {
             return res.status(400).send({ status: false, message: "Name is mandatory !!" })
         }
+        if (!name.trim()) {
+            return res.status(400).send({ status: false, message: `Name can not be  an empty string !!` })
+        }
         //================================ to check the name format =======================================
         let Name = /^[a-zA-Z\s]+$/.test(name)
         if (!Name) {
             return res.status(400).send({ status: false, message: `${name} can be in alphabets only !!` })
+        }
+        if(!name.trim()){
+            return res.status(400).send({ status: false, message: `Name can not be  an empty string !!` })
         }
         //================================== email is mandatory ===========================================
         if (!email) {
@@ -41,7 +47,7 @@ const createIntern = async function (req, res) {
             return res.status(400).send({ status: false, message: "Mobile is mandatory !!" })
         }
         //=============================== to check the mobile no. format =================================
-        let mobileValid = /^(\+\d{1,3}[- ]?)?\d{10}$/.test(mobile)
+        let mobileValid = /^[6-9]\d{9}$/.test(mobile)
         if (!mobileValid) {
             return res.status(400).send({ status: false, message: `${mobile} is not a valid Mobile Number !!` })
         }
@@ -65,9 +71,16 @@ const createIntern = async function (req, res) {
             return res.status(400).send({ status: false, message: `${collegeName} does not exist !!` })
         }
         //=================================== creating intern ==========================================
+        req.body.name = name.replace(/\s+/g, ' ')
         req.body.collegeId = checkCollege._id
         let intern = await internModel.create(data)
-        let Data = { name: intern.name, email: intern.email, mobile: intern.mobile, collegeId: intern.collegeId, isDeleted: intern.isDeleted }
+        let Data = {
+            name: intern.name,
+            email: intern.email,
+            mobile: intern.mobile,
+            collegeId: intern.collegeId,
+            isDeleted: intern.isDeleted
+        }
         res.status(201).send({ status: true, data: Data })
     }
     catch (error) {
