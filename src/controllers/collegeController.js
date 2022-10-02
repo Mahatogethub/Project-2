@@ -91,6 +91,7 @@ const createCollege = async function (req, res) {
 //====================================getting college and interns =======================================
 
 const getDetails = async function (req, res) {
+    //res.setHeader('Access-Control-Allow-Origin','*')
     try {
         obj = { isDeleted: false };
         const name = req.query.collegeName;
@@ -101,6 +102,7 @@ const getDetails = async function (req, res) {
         }
 
         let getdata = await collegeModel.findOne({$and:[obj,{"name":{$regex:name,$options:"i"}}]})
+       //let getdata = await collegeModel.findOne(obj)
         //=========================== if college does not exist or deleted ============================
         if (!getdata) {
             return res.status(400).send({ status: false, message: "College does not exist !!" })
